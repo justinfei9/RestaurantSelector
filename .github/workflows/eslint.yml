@@ -1,1 +1,40 @@
 
+name: ESLint Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install ESLint
+        run: npm install eslint --save-dev
+
+      - name: Run ESLint
+        run: npx eslint .
+
+      - name: Print Results
+        run: echo "ESLint checks completed."
+
+      - name: Check ESLint Results
+        run: |
+          if [ -f "eslint-results.xml" ]; then
+            echo "ESLint found errors - check the ESLint results for details."
+            exit 1
+          else
+            echo "No ESLint errors found!"
+          fi
